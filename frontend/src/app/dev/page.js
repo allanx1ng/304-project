@@ -125,7 +125,7 @@ const DevPage = () => {
 			</div>
 			<div className="w-2/3 p-4">
 				<div className="overflow-x-auto relative border p-2">
-					<span className="font-bold">Table</span>
+					<span className="font-bold">Table: {selectedTable}</span>
 					<table className="w-full text-md text-left">
 						<thead className="text-xs">
 							<tr>

@@ -48,7 +48,7 @@ const Register = () => {
 				setSuccessMessage("Successfully registered! Login to continue.");
 				setTimeout(() => {
 					router.push("/authentication");
-				}, 1000);
+				}, 2500);
 			})
 			.catch((error) => {
 				console.log(error);
