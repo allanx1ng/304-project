@@ -89,8 +89,9 @@ class Search {
 			const { username, postId } = req.query;
 			let data;
 			let query = "";
-
+			const values = [];
 			if (username) {
+				values.push(username);
 				query = `
 					SELECT Post.*, 
 						CASE 
@@ -102,9 +103,10 @@ class Search {
 					LEFT JOIN TextPost ON Post.postID = TextPost.postID AND Post.type = 0
 					LEFT JOIN ImagePost ON Post.postID = ImagePost.postID AND Post.type = 1
 					LEFT JOIN VideoPost ON Post.postID = VideoPost.postID AND Post.type = 2
-					WHERE Post.createdBy='${username}';
+					WHERE Post.createdBy=$1;
 				`;
 			} else if (postId) {
+				values.push(postId)
 				query = `
 					SELECT Post.*, 
 						CASE 
@@ -116,13 +118,13 @@ class Search {
 					LEFT JOIN TextPost ON Post.postID = TextPost.postID AND Post.type = 0
 					LEFT JOIN ImagePost ON Post.postID = ImagePost.postID AND Post.type = 1
 					LEFT JOIN VideoPost ON Post.postID = VideoPost.postID AND Post.type = 2
-					WHERE Post.postID=${postId};
+					WHERE Post.postID=$1;
 				`;
 			} else {
 				query = "SELECT * FROM Post;";
 			}
 
-			data = await db.queryDb(query);
+			data = await db.queryDbValues(query, values);
 			res.json(data);
 		} catch (error) {
 			console.error(error);
@@ -153,12 +155,12 @@ class Search {
 						INNER JOIN 
 							follow ON Post.createdBy = follow.following
 						WHERE 
-							follow.follower = '${user}'
+							follow.follower = $1
 						ORDER BY 
 							Post.timestamp DESC
-						LIMIT ${limit}
-						OFFSET ${offset};`;
-			const data = await db.queryDb(sql);
+						LIMIT $2
+						OFFSET $3;`;
+			const data = await db.queryDbValues(sql, [user, limit, offset]);
 			res.json(data);
 		} catch (error) {
 			console.error(error);
